@@ -1,18 +1,29 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const path = require("path");
+const mongoose = require("mongoose");
 const PORT = 8080;
+
+const articles = require("./routes/api/articles");
 
 const app = express();
 
+//Body Parser middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+//Db config
+const db = require("./config/keys").mongoURI;
 
-app.get("/", (req, res) => {
-  return res.sendFile(path.join(__dirname, 'public', './src/index.js'));
-});
+//connect to MongoDb
+mongoose.connect(db)
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log(err));
 
-app.listen(PORT, () => {
-  console.log(`Listening on PORT: ${PORT}.`);
-});
+
+//routes
+
+
+app.use("/api/articles", articles);
+
+
+app.listen(PORT, () => console.log(`Listneing on PORT: ${PORT}`));
